@@ -1,0 +1,7 @@
+archive/*
+app/*/target
+app/*/Cargo.lock
+mainte-pswd.bin
+tmdx4-workplace.log
+config.json
+*/assets/font
