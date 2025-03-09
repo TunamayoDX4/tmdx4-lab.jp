@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="format-detection" content="telephone=no,email=no,address=no">
+    <title>ツナマヨの屋根裏部屋</title>
+    <link rel="icon" href="assets/img/com/favicon.webp">
+    <meta name="discription" content="しがない創作者ツナ・マヨネーズの作業部屋">
+    <style>
+      :root {
+        --page-padding-top: 5vh;
+        --page-padding-bottom: 5vh;
+        --page-padding-left: 5vw;
+        --page-padding-right: 5vw;
+        --page-background-color: #009999;
+        --content-area-background-color: #CCCCCC;
+        --content-area-border-color: #FFFFFF;
+        --default-font-color: #000000;
+        --header-bar-color: #000099;
+        --header-text-color: #FFFFFF;
+        --header-button-background-color: #CCCCCC;
+        --header-button-active-background-color: #999999;
+        --header-button-border-color: #FFFFFF;
+        --header-button-active-border-color: #CCCCCC;
+        --side-background-color-A: #FFFFFF;
+        --side-background-color-B: #00CCFF;
+        --center-background-color-A: #FFFFCC;
+        --center-background-color-B: #FFEEBB;
+        --center-background-color-C: #FFDDBB;
+        --maincontent-title-background-color: #666666;
+        --maincontent-title-text-color-A: #33CCFF;
+        --maincontent-title-text-color-B: #FFFFFF;
+        --maincontent-title-shadow-color: #000000;
+        --maincontent-mainarea-background-color: #FFEEDD;
+      }
+      :root:has(#content-area > header input#nightmode:checked) {
+        --page-background-color: #003333;
+        --content-area-background-color: #333333;
+        --content-area-border-color: #666666;
+        --default-font-color: #CCCC99;
+        --header-bar-color: #000066;
+        --header-text-color: #CCCCCC;
+        --header-button-background-color: #333333;
+        --header-button-active-background-color: #000000;
+        --header-button-border-color: #666666;
+        --header-button-active-border-color: #333333;
+        --side-background-color-A: #000000;
+        --side-background-color-B: #003366;
+        --center-background-color-A: #111133;
+        --center-background-color-B: #001133;
+        --center-background-color-C: #000022;
+        --maincontent-title-background-color: #000000;
+        --maincontent-title-text-color-A: #CC9966;
+        --maincontent-title-text-color-B: #CCCCCC;
+        --maincontent-title-shadow-color: #333333;
+        --maincontent-mainarea-background-color: #222233;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        border: none;
+        box-sizing: border-box;
+        /*font-family: 'IPAEXG';*/
+        color: var(--default-font-color);
+        white-space: wrap collapse;
+      }
+      @font-face {
+        font-family: 'IPAEXG';
+        src: url("assets/font/IPAexfont00401/ipaexg.ttf");
+      }
+
+      /* コンテンツ全体についての設定 */
+      html {
+        width: 100%;
+        height: 100%;
+      }
+      @media screen and (min-width: 720px) {
+        /* PCならモバイル用コンテンツは表示しない */
+        .view-mob-only {
+          display: none;
+        }
+      }
+      @media screen and (max-width: 719px) {
+        /* モバイルならPC用コンテンツは表示しない */
+        .view-pc-only {
+          display: none;
+        }
+      }
+
+      /* ユーザが最大化ボタンを押してる場合 */
+      body:has(#content-area > header :is(input#maximize:checked,#noframe:checked)) {
+        padding: 0;
+      }
+      body {
+        width: 100%;
+        height: 100%;
+        padding-top: var(--page-padding-top);
+        padding-bottom: var(--page-padding-bottom);
+        padding-left: var(--page-padding-left);
+        padding-right: var(--page-padding-right);
+        background-color: var(--page-background-color);
+      }
+      @media screen and (max-width: 719px) {
+        /*幅719px未満のディスプレイの場合は上下左右の余白を表示しない*/
+        body {
+          padding: 0;
+        }
+      }
+
+      #content-area {
+        width: 100%;
+        height: 100%;
+        border: outset 2px var(--content-area-border-color);
+        background-color: var(--content-area-background-color);
+        display: flex;
+        flex-flow: column;
+      }
+
+      /* ヘッダについての設定 */
+      #content-area > header {
+        flex: 0;
+        padding: 2px;
+        padding-bottom: 0.25em;
+        border-bottom: groove 2px var(--content-area-border-color);
+      }
+      #head-bar {
+        background-color: var(--header-bar-color);
+        color: var(--header-text-color);
+        display: flex;
+        flex-flow: row;
+        justify-content: center;
+        align-content: center;
+        align-items: center;
+      }
+      #head-bar > *:nth-child(2) {
+        margin-right: auto;
+      }
+      #head-bar-title > h1 {
+        font-size: large;
+        font-weight: bold;
+        color: var(--header-text-color);
+      }
+      @media screen and (min-width: 720px) {
+        #head-bar-button .view-pc-only {
+          display: flex;
+          flex-flow: row;
+        }
+      }
+      @media screen and (max-width: 719px) {
+        #head-bar-button .view-mob-only {
+          display: flex;
+          flex-flow: row;
+        }
+      }
+      #head-bar-button {
+        display: flex;
+        flex-flow: row;
+      }
+
+      #content-area > header #head-bar-button {
+        input[type="checkbox"] {
+          appearance: none;
+          display: none;
+        }
+        label:has(input[type="checkbox"]) {
+          user-select: none;
+          margin: 1px;
+          padding-inline: 2px;
+          display: block;
+          background-color: var(--header-button-background-color);
+          border: outset 2px var(--header-button-border-color);
+          font-size: small;
+          font-weight: 900;
+          color: var(--default-font-color);
+        }
+        label:has(input[type="checkbox"]:checked) {
+          background-color: var(--header-button-active-background-color);
+          border: inset 2px var(--header-button-active-border-color);
+        }
+      }
+
+      /* メインコンテンツ部分の枠についての設定 */
+      #noframe-scroll {
+        flex: 1 1 0;
+        display: flex;
+        flex-flow: column;
+      }
+
+      #noframe-scroll > main {
+        flex: 1 1 0;
+        display: flex;
+        flex-flow: row-reverse;
+      }
+      #noframe-scroll > main > article {
+        padding: 0.25em;
+        padding-inline: 0.25em;
+        border: inset 2px var(--content-area-border-color);
+      }
+      #noframe-scroll > main > article#side {
+        flex: 0 1 auto;
+        > div.sys-style-marker {
+          max-width: max(8em, 15vw);
+        }
+      }
+      #noframe-scroll > main > article#main {
+        flex: 1 1 0;
+      }
+      @media screen and (max-width: 719px) {
+        #content-area {
+          > header:not(:has(#showside:checked)) + #noframe-scroll {
+            overflow: auto;
+            > main {
+              /*> article#main { 
+              }*/
+              > article#side {
+                display: none;
+              }
+            }
+          }
+          > header:has(#showside:checked) + #noframe-scroll {
+            overflow: auto;
+            > main {
+              > article#main {
+                display: none;
+              }
+              > article#side {
+                flex: 1 1 0;
+                > div.sys-style-marker {
+                  max-width: 100%;
+                  height: 100%;
+                }
+              }
+            }
+          }
+        }
+      }
+      @media screen and (min-width: 720px) {
+        #content-area {
+          > header:has(:not(#noframe:checked)) + #noframe-scroll > main {
+            overflow-y: hidden;
+            > article { overflow-y: auto; }
+          }
+          > header:has(#noframe:checked) + #noframe-scroll {
+            overflow: auto;
+            > main > article#side {
+              display: none;
+            }
+          }
+          > header:has(#side-inverse:checked) + #noframe-scroll > main {
+            flex-flow: row;
+          }
+        }
+      }
+
+      /* フッタについての設定 */
+      #noframe-scroll > footer {
+        flex: 0;
+        padding: 1px;
+        padding-top: 0.25em;
+        border-top: groove 2px var(--content-area-border-color);
+        display: flex;
+        flex-flow: row;
+        align-content: center;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* 共通デザインの設定 */
+
+      /* HRタグ */
+      hr {
+        border-bottom: groove 2px var(--content-area-border-color);
+        margin: 0.5em;
+        margin-inline: 0;
+      }
+
+      /* マジダサロゴくん */
+      .page-title {
+        margin-inline: auto;
+        padding: 1em;
+        background-color: var(--maincontent-title-background-color);
+        display: table;
+        > div {
+          display: table-cell;
+          vertical-align: middle;
+          text-align: center;
+          > div {
+            text-shadow: 0.5em 0.5em var(--maincontent-title-shadow-color);
+            transform: skew(5deg, 2deg);
+          }
+          * {
+            color: var(--maincontent-title-text-color-A);
+          }
+        }
+      }
+
+      /* メインコンテンツ(センタフレーム)についての設定 */
+      article#main {
+        background: linear-gradient(
+          135deg, var(--center-background-color-B) 25%, transparent 25%
+        ) -20px 0/40px 40px, 
+        linear-gradient(
+          225deg, var(--center-background-color-C) 25%, transparent 25%
+        ) -20px 0/40px 40px, 
+        linear-gradient(
+          315deg, var(--center-background-color-B) 25%, transparent 25%
+        ) 0px 0/40px 40px, 
+        linear-gradient(
+          45deg, var(--center-background-color-C) 25%, transparent 25%
+        ) 0px 0/40px 40px, 
+        var(--center-background-color-A);
+
+        .rainbow {
+          background: linear-gradient(to right, purple, blue, cyan, green, yellow, orange, red);
+          background-clip: text;
+          color: transparent;
+        }
+
+        > header {
+          text-align: center;
+          padding: 2px;
+          padding-inline: 0;
+          border-bottom: groove 2px var(--content-area-border-color);
+          > div#main-content-title-area {
+            width: max(45%, 15em);
+            height: max(10vh, 5em);
+            margin: 2em;
+            margin-inline: auto;
+            h2 {
+              font-size: 300%;
+            }
+          }
+          > #notice {
+            position: relative;
+            margin-inline: auto;
+            padding: 2px;
+            width: max(45%, 15em);
+            overflow: hidden;
+            background-color: black;
+            > div {
+              position: absolute;
+              white-space: nowrap;
+              animation: marquee 10s linear infinite;
+              color: orange;
+            }
+          }
+          > #notice:hover > div {
+            animation-play-state: paused;
+            cursor: default;
+          }
+          > #notice::after {
+            content: "";
+            white-space: nowrap;
+            display: inline-block;
+          }
+        }
+
+        > main {
+          padding: 0.5em;
+          padding-inline: 1em;
+
+          > article {
+            max-width: min(71em, 100%);
+            padding: 0.5em;
+            margin-inline: auto;
+          }
+          > article.dialy {
+            background-color: var(--maincontent-mainarea-background-color);
+            > header {
+              padding: 0.5em;
+              margin-inline: auto;
+              max-width: min(69em, 100%);
+            }
+            > main {
+              border-top: groove 2px var(--content-area-border-color);
+              border-bottom: groove 2px var(--content-area-border-color);
+              padding: 0.5em;
+              padding-inline: min(4em, max(calc((100% - 55em) / 2), 0.5em));
+              max-width: 100%;
+            }
+          }
+        }
+      }
+      
+      @keyframes marquee {
+        0% {
+          left: 100%;
+          transform: translateX(0);
+        }
+        100% {
+          left: 0;
+          transform: translateX(-100%);
+        }
+      }      
+
+      /* メインコンテンツ(サイドフレーム)についての設定 */
+      article#side {
+        background-image: linear-gradient(
+          150deg,  var(--side-background-color-B) -5vh, var(--side-background-color-A) 30vh
+        );
+
+        #side-content-title-area * {
+          font-size: 110%;
+        }
+
+        > .sys-style-marker {
+          display: flex;
+          flex-flow: column;
+          > * {
+            flex: 0 1 0;
+            padding-inline: 0.25em;
+          }
+          > main {
+            padding: 1em;
+          }
+          > :is(header, footer) {
+            padding: 0.5em;
+          }
+          > :is(header,main) {
+            border-bottom: groove 2px var(--content-area-border-color);
+          }
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <form method="GET" action="?" id="content-area"><!--コンテンツの描画エリア-->
+      <header>
+        <section id="head-bar">
+          <img src="assets/img/com/favicon-mini.webp" width="16" height="16" alt="">
+          <div id="head-bar-title"><h1>ツナマヨの屋根裏部屋</h1></div>
+          <div id="head-bar-button">
+            <label for="nightmode"><input type="checkbox" name="nightmode" id="nightmode" value="nightmode">★</label>
+            <div class="view-mob-only">
+              <label for="showside"><input type="checkbox" name="showside" id="showside" value="showside">＜</label>
+            </div>
+            <div class="view-pc-only">
+              <label for="side-inverse"><input type="checkbox" name="side-inverse" id="side-inverse" value="side-inverse">◇</label>
+              <label for="noframe"><input type="checkbox" name="noframe" id="noframe" value="noframe">＊</label>
+              <label for="maximize"><input type="checkbox" name="maximize" id="maximize" value="maximize">□</label>
+            </div>
+          </div>
+        </section>
+        <section id="menu-bar">
+        </section>
+      </header>
+      <div id="noframe-scroll"><!--フレームなし or モバイル端末でのスクロール範囲指定-->
+        <main>
+          <article id="main">
+            <header>
+              <div class="page-title" id="main-content-title-area"><div><div><h2>ツナマヨの屋根裏部屋</h2></div></div></div>
+              <span class="rainbow">★</span>あなたは××××人目のお客様です！<span class="rainbow">★</span><br>
+              <section id="notice">
+                <div>お知らせはございません。</div>
+              </section>
+            </header>
+            <main>
+              <article class="dialy">
+                <header>
+                  <h3>日記</h3>
+                  <span id="article-update">2025-03-03</span>
+                </header>
+                <main>
+                  吾輩はゴリラである<br>
+                  ウホウホ<br>
+                  <label class="img-link-label" for=""> 
+                    <input type="submit" formaction="assets/img/illust/standard/Pearl.webp">
+                    <img itemprop="image" loading="lazy" src="assets/img/illust/mini/Pearl.webp">
+                  </label>
+                </main>
+              </article>
+            </main>
+          </article>
+          <article id="side"><div class="sys-style-marker">
+            <header>
+              <a href="/" style="text-decoration: none;" class="page-title" id="side-content-title-area"><div><div>ツナマヨの屋根裏部屋</div></div></a>
+            </header>
+            <main>
+            </main>
+            <footer>
+              このページはMozilla Firefox 135, Microsoft Edge 133, Google Chrome 133にてテストされております。<br>
+              適切に表示することを望まれる場合には、2024年以降にリリースされたバージョンのブラウザをご使用ください。<br>
+              <hr>
+              連絡先：https://misskey.design/@tunatuna486<br>
+            </footer>
+          </div></article>
+        </main>
+        <footer>
+          <div id="sign">2025 This page written by TunamayoDX4</div>
+        </footer>
+      </div>
+    </form>
+  </body>
+</html>

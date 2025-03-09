@@ -4,10 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1">
     <meta name="format-detection" content="telephone=no,email=no,address=no">
-    <title>ツナマヨの屋根裏部屋</title>
+    <title>ADMIN ENTER</title>
     <link rel="icon" href="assets/img/com/favicon.webp">
-    <meta name="description" content="しがない創作者ツナ・マヨネーズの作業部屋。趣味で作ったイラストやプログラム、漫画などを公開していきます。">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One">
     <style>
       :root {
         --display-bg-color-base: #009999;
@@ -447,155 +445,13 @@
           }
         }
       }
-    
-    </style>
-    <style>
-
-      /* マジダサロゴくん */
-      .funny-logo {
-        margin-inline: auto;
-        padding: 1em;
-        background-color: var(--funny-logo-bg-color);
-        display: table;
-        > div {
-          display: table-cell;
-          vertical-align: middle;
-          text-align: center;
-          > div {
-            text-shadow: 0.25em 0.25em var(--funny-logo-shadow-color);
-            transform: skew(5deg, 2deg);
-          }
-          * {
-            font-family: 'Mochiy Pop One';
-            color: var(--funny-logo-text-color);
-          }
-        }
-      }
-
-      /* 虹色文字 */
-      .rainbow {
-        background: linear-gradient(to right, purple, blue, cyan, green, yellow, orange, red);
-        background-clip: text;
-        color: transparent;
-      }
-
-      /* いにしえのマーキー */
-      .marquee {
-        position: relative;
-        margin-inline: auto;
-        padding: 2px;
-        width: max(45%, 15em);
-        overflow: hidden;
-        --marquee-bg-color: black;
-        --marquee-string-color: orange;
-        background-color: var(--marquee-bg-color);
-        & > div {
-          position: absolute;
-          white-space: nowrap;
-          animation: marquee 10s linear infinite;
-          color: var(--marquee-string-color);
-        }
-        &:hover > div {
-          animation-play-state: paused;
-          cursor: default;
-        }
-        &:after {
-          content: "";
-          white-space: nowrap;
-          display: inline-block;
-        }
-      }
-      @keyframes marquee {
-        0% {
-          left: 100%;
-          transform: translateX(0);
-        }
-        100% {
-          left: 0;
-          transform: translateX(-100%);
-        }
-      }
-
-      body #main-window > main {
-        #main-content {
-          background: linear-gradient(
-            135deg, var(--main-bg-color-B) 25%, transparent 25%
-          ) -20px 0/40px 40px, 
-          linear-gradient(
-            225deg, var(--main-bg-color-C) 25%, transparent 25%
-          ) -20px 0/40px 40px, 
-          linear-gradient(
-            315deg, var(--main-bg-color-B) 25%, transparent 25%
-          ) 0px 0/40px 40px, 
-          linear-gradient(
-            45deg, var(--main-bg-color-C) 25%, transparent 25%
-          ) 0px 0/40px 40px, 
-          var(--main-bg-color-A);
-          padding: 0.25rem;
-          padding-inline: 0.5rem;
-          display: flex;
-          flex-flow: column;
-          & > :is(header,main,footer) {
-            padding: 0.25rem;
-          }
-          & > header {
-            display: flex;
-            flex-flow: column;
-            justify-content: center;
-            align-items: center;
-            .funny-logo {
-              margin: 3rem;
-              margin-inline: auto;
-              width: min(max(
-                28rem, 40%
-              ), 95%);
-              h2 {
-                font-weight: lighter;
-                font-size: 320%;
-              }
-            } 
-          }
-          & > main {
-            flex: 1;
-          }
-        }
-
-        #side-frame {
-          background-image: linear-gradient(
-            150deg,  var(--frame-bg-color-B) -5vh, var(--frame-bg-color-A) 30vh
-          );
-          padding: 0.25rem;
-          display: flex;
-          flex-flow: column;
-          & > :is(header,main,footer) {
-            padding: 0.125rem;
-          }
-          & > header {
-            .funny-logo {
-              max-width: 95%;
-              font-size: 130%;
-            }
-          }
-          & > main {
-            flex: 1;
-          }
-          & > footer {
-            & > div#admin-only {
-              & * {
-                font-size: smaller;
-              }
-            }
-          }
-        }
-      
-      }
     </style>
   </head>
   <body>
-    <form action="" method="GET" id="trans-ownpage"></form>
     <section id="main-area">
-      <article class="ui-window" id="main-window">
+      <article class="ui-window" area="main-window">
         <header>
+          
           <section class="window-header-line">
             <div class="window-hl-left">
               <img class="window-title-icon" src="./assets/img/com/favicon-mini.webp" alt="">
@@ -680,33 +536,6 @@
           </section>
         </header>
         <main>
-          <article class="window-graphic-obj" id="side-frame">
-            <header>
-              <label class="funny-logo">
-                <input type="submit" form="trans-ownpage">
-                <div><div>ツナマヨの屋根裏部屋</div></div>
-              </label>
-            </header>
-            <hr>
-            <main></main>
-            <hr>
-            <footer>
-              このページは<br>Mozilla Firefox 136<br>Google Chrome 133<br>Microsoft Edge 133<br>
-              にてテストをしております。<br>
-              <hr>
-              ページレイアウトを適切に表示するためには、<br>
-              お手数ですが2024年以降にリリースされたバージョンのブラウザでのアクセスをお願いします。
-              <hr>
-              <img src="assets/img/banner/banner01.png" alt="バナー01">
-              <hr>
-              <div id="admin-only">
-                <label class="common-button" for="enter-for-admin">
-                  <input type="submit" id="enter-for-admin" form="trans-ownpage" formaction="admin-enter.html" formmethod="GET" value="管理用ページへ">
-                  管理用ページへ
-                </label>
-              </div>
-            </footer>
-          </article>
           <article class="window-graphic-obj" id="main-content">
             <header>
               <div class="funny-logo">
@@ -727,7 +556,7 @@
           </article>
         </main>
         <footer>
-          <span id="sign">2025 This page written by TunamayoDX4</span>
+          2025 This page and application created by TunamayoDX4
         </footer>
       </article>
     </section>
@@ -745,11 +574,5 @@
       <footer class="row-ui">
       </footer>
     </article>
-    <label for="start-ctx-button" class="cb-closure"></label>
-    <style>
-      body:has(article#taskbar > header input#start-ctx-button:checked) > label.cb-closure[for="start-ctx-button"] {
-        display: block;
-      }
-    </style>
   </body>
 </html>
