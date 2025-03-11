@@ -9,9 +9,8 @@
     <meta name="description" content="しがない創作者ツナ・マヨネーズの作業部屋。趣味で作ったイラストやプログラム、漫画などを公開していきます。">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One">
     <style>
+      /* 共用ライブラリの実装 */
       :root {
-        --display-bg-color-base: #009999;
-        --display-bg-color: var(--display-bg-color-base);
         --window-bg-color: #CCCCCC;
         --window-border-color: #FFFFFF;
         --window-header-color: #000099;
@@ -22,94 +21,26 @@
         --button-border-color-hov: lch(from var(--button-border-color) calc(l + 10) c h);
         --button-bg-color-act: lch(from var(--button-bg-color) calc(l - 10) c h);
         --button-border-color-act: lch(from var(--button-border-color) calc(l - 10) c h);
+        --input-text-bg-color: #FFFFFF;
         --font-color: #000000;
-        
-        --main-bg-color-A: #FFFFCC;
-        --main-bg-color-B: #FFEEBB;
-        --main-bg-color-C: #FFDDBB;
-
-        --frame-bg-color-A: #FFFFFF;
-        --frame-bg-color-B: #00CCFF;
-
-        --funny-logo-bg-color: #996633;
-        --funny-logo-text-color: #33CCFF;
-        --funny-logo-shadow-color: #333333;
-        &:has(#main-window > header > .window-header-line input#night:checked) {
-          --window-header-color: #000033;
-          --window-header-font-color: #999999;
-          --window-bg-color: #333333;
-          --window-border-color: #666666;
-          --font-color: #CCCC99;
-
-          --main-bg-color-A: #111133;
-          --main-bg-color-B: #001133;
-          --main-bg-color-C: #000022;
-
-          --frame-bg-color-A: #000000;
-          --frame-bg-color-B: #003366;
-          
-          --funny-logo-bg-color: #000000;
-          --funny-logo-text-color: #996633;
-          --funny-logo-shadow-color: #003399;
-          --display-bg-color: lch(from var(--display-bg-color-base) calc(l - 50) c h);
-        }
       }
-
-      * {
-        margin: 0;
-        padding: 0;
-        border: none;
-        box-sizing: border-box;
-        font-family: 'ＭＳ Ｐゴシック';
-        color: var(--font-color);
-        white-space: wrap collapse;
-        overflow-wrap: anywhere;
-        word-break: break-all;
-      }
-      input {
-        appearance: none;
-        display: none;
-      }
-
-      html {
-        width: 100%;
-        height: 100%;
-        background-color: var(--display-bg-color);
-        & > body {
-          width: 100%;
-          height: 100%;
-          display: flex;
-          flex-flow: column;
-          & > #main-area {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            flex: 1;
-            & > #main-window {
-              z-index: 1;
-              width: 100%;
-              height: 100%;
-              &:has(> header input#noheader:checked) > header > .window-header-line {
-                display: none;
-              }
-            }
-          }
-          &:has(> #main-area > #main-window > header input#notaskbar:checked) > #taskbar {
-            display: none;
-          }
-        }
-      }
-
-      /* 共用スタイルの設定 */
 
       /* Win98風列方向UI汎用ライブラリ */
       .row-ui {
-        & > hr.sep-thick {
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+
+        & hr {
+          height: 100%;
+        }
+
+        & hr.sep-thick {
           border: outset 2px var(--window-border-color);
           margin-inline: 2px;
         }
 
-        & > hr.sep-thin {
+        & hr.sep-thin {
           border-left: groove 2px var(--window-border-color);
           margin-inline: 1px; 
         }
@@ -119,7 +50,7 @@
       .ui-bar {
         position: sticky;
         padding: 1px;
-        z-index: 0;
+        z-index: 1000;
         display: flex;
         flex-flow: row;
         background-color: var(--window-bg-color);
@@ -145,7 +76,7 @@
       .ui-window {
         position: absolute;
         padding: 1px;
-        z-index: 0;
+        z-index: 1000;
         display: flex;
         flex-flow: column;
         background-color: var(--window-bg-color);
@@ -236,6 +167,7 @@
             display: flex;
             flex-flow: row;
             border: inset 1px var(--window-border-color);
+            font-size: small;
             & > * {
               border: outset 1px var(--window-border-color);
               display: flex;
@@ -244,7 +176,6 @@
                 padding-inline: 1rem;
                 height: 100%;
                 vertical-align:middle;
-                font-size: small;
               }
             }
             & > :first-child {
@@ -275,8 +206,8 @@
         }
       }
 
-      /* チェックボックスボタンクロージャ */
-      label.cb-closure {
+      /* ボタンクロージャ */
+      .cb-closure {
         z-index: 100;
         width: 100%;
         height: 100%;
@@ -285,9 +216,17 @@
         display: none;
       }
 
+      /* 汎用テキストインプット */
+      .common-text-input {
+        --border-thickness: 2px;
+        padding-inline: 2px;
+        background-color: var(--input-text-bg-color);
+        border: inset var(--border-thickness) var(--window-border-color);
+      }
+
       /* 汎用ボタン */
       .common-button {
-        z-index: 500;
+        z-index: 50;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -347,7 +286,7 @@
         --list-border-thickness: 2px;
         --shift: calc(100%/2 + 0.5rem + var(--border-thickness));
         & > :is(ul,ol) {
-          z-index: 10000;
+          z-index: 50;
           position:absolute;
           display: none;
           min-width: 100%;
@@ -384,6 +323,96 @@
               background-color: transparent;
             }
             display: block;
+          }
+        }
+      }
+    </style>
+    <style>
+      :root {
+        --display-bg-color-base: #009999;
+        --display-bg-color: var(--display-bg-color-base);
+        
+        --main-bg-color-A: #FFFFCC;
+        --main-bg-color-B: #FFEEBB;
+        --main-bg-color-C: #FFDDBB;
+
+        --frame-bg-color-A: #FFFFFF;
+        --frame-bg-color-B: #00CCFF;
+
+        --funny-logo-bg-color: #996633;
+        --funny-logo-text-color: #33CCFF;
+        --funny-logo-shadow-color: #333333;
+        &:has(#main-window > header > .window-header-line input#night:checked) {
+          --window-header-color: #000033;
+          --window-header-font-color: #999999;
+          --window-bg-color: #333333;
+          --window-border-color: #666666;
+          --input-text-bg-color: #111111;
+          --font-color: #CCCC99;
+
+          --main-bg-color-A: #111133;
+          --main-bg-color-B: #001133;
+          --main-bg-color-C: #000022;
+
+          --frame-bg-color-A: #000000;
+          --frame-bg-color-B: #003366;
+          
+          --funny-logo-bg-color: #000000;
+          --funny-logo-text-color: #996633;
+          --funny-logo-shadow-color: #003399;
+          --display-bg-color: lch(from var(--display-bg-color-base) calc(l - 50) c h);
+        }
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        border: none;
+        box-sizing: border-box;
+        font-family: 'ＭＳ Ｐゴシック';
+        color: var(--font-color);
+        white-space: wrap collapse;
+        overflow-wrap: anywhere;
+        word-break: break-all;
+      }
+
+      html {
+        width: 100%;
+        height: 100%;
+        background-color: var(--display-bg-color);
+        & > body {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-flow: column;
+          & > #main-area {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            flex: 1;
+            & > #main-window {
+              z-index: 1;
+              width: 100%;
+              height: 100%;
+              &:has(> header input#noheader:checked) > header > .window-header-line {
+                display: none;
+              }
+            }
+            &:has(> #main-window > main > #side-frame input#enter-adm-window-open:checked) {
+              & > #enter-adm-window {
+                display: block;
+              }
+            }
+            & > #enter-adm-window {
+              width: 14rem;
+              height: 6.25rem;
+              left: calc(50% - 7rem);
+              top: calc(50% - 3rem);
+              display: none;
+            }
+          }
+          &:has(> #main-area > #main-window > header input#notaskbar:checked) > #taskbar {
+            display: none;
           }
         }
       }
@@ -636,15 +665,15 @@
             </div>
           </section>
           <section class="window-header-menu">
-            <section class="window-header-pulldown-list row-ui">
+            <section class="window-header-pulldown-list row-ui" style="z-index: 1000;">
               <hr class="sep-thick">
-              <div class="common-button common-pulldown flat-type" id="menu-navi" style="--border-thickness: 1px">
+              <nav class="common-button common-pulldown flat-type" id="menu-navi" style="--border-thickness: 1px">
                 ﾅﾋﾞｹﾞｰｼｮﾝ(N)
                 <ul>
                   <li class="common-button flat-type" style="--border-thickness: 1px">あああ</li>
                   <li class="common-button flat-type" style="--border-thickness: 1px">いいい</li>
                 </ul>
-              </div>
+              </nav>
               <div class="common-button common-pulldown flat-type" id="menu-favorite" style="--border-thickness: 1px">
                 お気に入り(F)
                 <ul>
@@ -678,12 +707,22 @@
               <img class="window-header-right-logo-icon" src="./assets/img/com/favicon-mini.webp" alt="">
             </section>
           </section>
+          <section class="window-header-menu"  style="z-index: 900;">
+            <section class="row-ui">
+              <hr class="sep-thick">
+              <label for="search-on-page" class="common-button flat-type" style="--border-thickness: 1px">
+                <input type="submit" id="search-on-page" form="trans-ownpage" formaction="search" formmethod="get">
+                ﾍﾟｰｼﾞ内検索(S)
+              </label>
+              <input class="common-text-input" type="text" name="search-string" form="trans-ownpage" style="margin-inline: 0.5rem; flex: 1;">
+            </section>
+          </section>
         </header>
         <main>
           <article class="window-graphic-obj" id="side-frame">
             <header>
               <label class="funny-logo">
-                <input type="submit" form="trans-ownpage">
+                <input type="submit" form="trans-ownpage" style="display: none;">
                 <div><div>ツナマヨの屋根裏部屋</div></div>
               </label>
             </header>
@@ -700,9 +739,9 @@
               <img src="assets/img/banner/banner01.png" alt="バナー01">
               <hr>
               <div id="admin-only">
-                <label class="common-button" for="enter-for-admin">
-                  <input type="submit" id="enter-for-admin" form="trans-ownpage" formaction="admin-enter.html" formmethod="GET" value="管理用ページへ">
-                  管理用ページへ
+                <label class="common-button" for="enter-adm-window-open">
+                  <input type="checkbox" id="enter-adm-window-open">
+                  管理用ﾍﾟｰｼﾞへのﾛｸﾞｲﾝ
                 </label>
               </div>
             </footer>
@@ -730,6 +769,32 @@
           <span id="sign">2025 This page written by TunamayoDX4</span>
         </footer>
       </article>
+      <section id="enter-adm-window" class="ui-window">
+        <header>
+          <section class="window-header-line">
+            <div class="window-hl-left window-title">管理ﾍﾟｰｼﾞのﾛｸﾞｲﾝ</div>
+            <div class="window-hl-right ctx-button">
+              <label for="enter-adm-window-open" class="common-button">×</label>
+            </div>
+          </section>
+        </header>
+        <main style="display: flex; flex-flow: column;">
+          <div style="display: flex; flex-flow: row;">
+            <label for="input-admin-name" style="width: 10rem;">管理ﾕｰｻﾞ名</label>：
+            <input class="common-text-input" type="text" name="admin-name" form="trans-ownpage" style="width: 100%;" id="input-admin-name">
+          </div>
+          <div style="display: flex; flex-flow: row;">
+            <label for="input-admin-pswd" style="width: 10rem;">パスワード</label>：
+            <input class="common-text-input" type="password" name="admin-password" form="trans-ownpage" style="width: 100%" id="input-admin-pswd">
+          </div>
+          <div style="width: 100%; display: flex; flex-flow: row; align-items: center; align-content: center; justify-content: space-between; padding-inline: 1rem; margin: 0.25rem;">
+            <label for="enter-admin" class="common-button" style="padding-inline: 0.5rem;">
+              <input type="submit" id="enter-admin" form="trans-ownpage" formaction="admin-enter" formmethod="post">ﾛｸﾞｲﾝ
+            </label>
+            <label for="enter-adm-window-open" class="common-button hidden-checked-active" style="padding-inline: 0.5rem;">ｷｬﾝｾﾙ</label>
+          </div>
+        </main>
+      </section>
     </section>
     <article class="ui-bar" id="taskbar">
       <header class="row-ui">
@@ -746,8 +811,12 @@
       </footer>
     </article>
     <label for="start-ctx-button" class="cb-closure"></label>
+    <label for="enter-adm-window-open" class="cb-closure"></label>
     <style>
       body:has(article#taskbar > header input#start-ctx-button:checked) > label.cb-closure[for="start-ctx-button"] {
+        display: block;
+      }
+      body:has(section#main-area > article#main-window > main > #side-frame input#enter-adm-window-open:checked) > label.cb-closure[for="enter-adm-window-open"] {
         display: block;
       }
     </style>
