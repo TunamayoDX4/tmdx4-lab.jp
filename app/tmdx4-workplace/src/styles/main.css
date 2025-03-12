@@ -1,91 +1,206 @@
-/* メインコンテンツ(センタフレーム)についての設定 */
-article#main {
-  background: linear-gradient(
-    135deg, var(--center-background-color-B) 25%, transparent 25%
-  ) -20px 0/40px 40px, 
-  linear-gradient(
-    225deg, var(--center-background-color-C) 25%, transparent 25%
-  ) -20px 0/40px 40px, 
-  linear-gradient(
-    315deg, var(--center-background-color-B) 25%, transparent 25%
-  ) 0px 0/40px 40px, 
-  linear-gradient(
-    45deg, var(--center-background-color-C) 25%, transparent 25%
-  ) 0px 0/40px 40px, 
-  var(--center-background-color-A);
+:root {
+  --display-bg-color-base: #009999;
+  --display-bg-color: var(--display-bg-color-base);
+  
+  --main-bg-color-A: #FFFFCC;
+  --main-bg-color-B: #FFEEBB;
+  --main-bg-color-C: #FFDDBB;
 
-  .rainbow {
-    background: linear-gradient(to right, purple, blue, cyan, green, yellow, orange, red);
-    background-clip: text;
-    color: transparent;
+  --frame-bg-color-A: #FFFFFF;
+  --frame-bg-color-B: #00CCFF;
+
+  --funny-logo-bg-color: #996633;
+  --funny-logo-text-color: #33CCFF;
+  --funny-logo-shadow-color: #333333;
+  &:has(#main-window > header > .window-header-line input#night:checked) {
+    --window-header-color: #000033;
+    --window-header-font-color: #999999;
+    --window-bg-color: #333333;
+    --window-border-color: #666666;
+    --input-text-bg-color: #111111;
+    --font-color: #CCCC99;
+
+    --main-bg-color-A: #111133;
+    --main-bg-color-B: #001133;
+    --main-bg-color-C: #000022;
+
+    --frame-bg-color-A: #000000;
+    --frame-bg-color-B: #003366;
+    
+    --funny-logo-bg-color: #000000;
+    --funny-logo-text-color: #996633;
+    --funny-logo-shadow-color: #003399;
+    --display-bg-color: lch(from var(--display-bg-color-base) calc(l - 50) c h);
   }
+}
 
-  > header {
-    text-align: center;
-    padding: 2px;
-    padding-inline: 0;
-    border-bottom: groove 2px var(--content-area-border-color);
-    > div#main-content-title-area {
-      width: max(45%, 15em);
-      height: max(10vh, 5em);
-      margin: 2em;
-      margin-inline: auto;
-      h2 {
-        font-size: 300%;
-      }
-    }
-    > #notice {
+* {
+  margin: 0;
+  padding: 0;
+  border: none;
+  box-sizing: border-box;
+  font-family: 'ＭＳ Ｐゴシック';
+  color: var(--font-color);
+  white-space: wrap collapse;
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+
+html {
+  width: 100%;
+  height: 100%;
+  background-color: var(--display-bg-color);
+  & > body {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-flow: column;
+    & > #main-area {
       position: relative;
-      margin-inline: auto;
-      padding: 2px;
-      width: max(45%, 15em);
-      overflow: hidden;
-      background-color: black;
-      > div {
-        position: absolute;
-        white-space: nowrap;
-        animation: marquee 10s linear infinite;
-        color: orange;
+      width: 100%;
+      height: 100%;
+      flex: 1;
+      & > #main-window {
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        &:has(> header input#noheader:checked) > header > .window-header-line {
+          display: none;
+        }
+      }
+      &:has(> #main-window > main > #side-frame input#enter-adm-window-open:checked) {
+        & > #enter-adm-window {
+          display: block;
+        }
+      }
+      & > #enter-adm-window {
+        width: 14rem;
+        height: 6.25rem;
+        left: calc(50% - 7rem);
+        top: calc(50% - 3rem);
+        display: none;
       }
     }
-    > #notice:hover > div {
-      animation-play-state: paused;
-      cursor: default;
-    }
-    > #notice::after {
-      content: "";
-      white-space: nowrap;
-      display: inline-block;
+    &:has(> #main-area > #main-window > header input#notaskbar:checked) > #taskbar {
+      display: none;
     }
   }
+}
 
-  > main {
-    padding: 0.5em;
-    padding-inline: 1em;
-
-    > article {
-      max-width: min(71em, 100%);
-      padding: 0.5em;
-      margin-inline: auto;
-    }
-    > article.dialy {
-      background-color: var(--maincontent-mainarea-background-color);
-      > header {
-        padding: 0.5em;
-        margin-inline: auto;
-        max-width: min(69em, 100%);
+@media screen and (min-width: 720px) {
+  /* PC向け設定 */
+  body {
+    & > #main-area > #main-window {
+      &:not(:has(> header input#maximize:checked)) {
+        width: calc(100% - 8vw);
+        height: calc(100% - 8vh);
+        margin: 4vh;
+        margin-inline: 4vw;
       }
-      > main {
-        border-top: groove 2px var(--content-area-border-color);
-        border-bottom: groove 2px var(--content-area-border-color);
-        padding: 0.5em;
-        padding-inline: min(4em, max(calc((100% - 55em) / 2), 0.5em));
-        max-width: 100%;
+    }
+    & .mob-only {
+      display: none;
+    }
+    #main-window {
+      &:has(> header input#invframe:checked) {
+        & > main {
+          flex-flow: row-reverse;
+        }
+      }
+      &:has(> header input#noframe:checked) > main > #side-frame {
+        display: none;
+      }
+      & > main {
+        #side-frame {
+          max-width: max(10em, 18vw);
+        }
       }
     }
   }
 }
 
+@media screen and (max-width: 719px) {
+  /* モバイル向け設定 */
+  body {
+    & > #main-area > #main-window .window-header-menu{
+      display: none;
+    }
+    & > article#taskbar {
+      display: none;
+    }
+    & .pc-only {
+      display: none;
+    }
+    #main-window {
+      &:has(> header input#toggleframe:checked) > main {
+        #main-content {
+          display: none;
+        }
+      }
+
+      &:not(:has( > header input#toggleframe:checked)) > main {
+        #side-frame {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+ /* マジダサロゴくん */
+ .funny-logo {
+  margin-inline: auto;
+  padding: 1em;
+  background-color: var(--funny-logo-bg-color);
+  display: table;
+  > div {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    > div {
+      text-shadow: 0.25em 0.25em var(--funny-logo-shadow-color);
+      transform: skew(5deg, 2deg);
+    }
+    * {
+      font-family: 'Mochiy Pop One';
+      color: var(--funny-logo-text-color);
+    }
+  }
+}
+
+/* 虹色文字 */
+.rainbow {
+  background: linear-gradient(to right, purple, blue, cyan, green, yellow, orange, red);
+  background-clip: text;
+  color: transparent;
+}
+
+/* いにしえのマーキー */
+.marquee {
+  position: relative;
+  margin-inline: auto;
+  padding: 2px;
+  width: max(45%, 15em);
+  overflow: hidden;
+  --marquee-bg-color: black;
+  --marquee-string-color: orange;
+  background-color: var(--marquee-bg-color);
+  & > div {
+    position: absolute;
+    white-space: nowrap;
+    animation: marquee 10s linear infinite;
+    color: var(--marquee-string-color);
+  }
+  &:hover > div {
+    animation-play-state: paused;
+    cursor: default;
+  }
+  &:after {
+    content: "";
+    white-space: nowrap;
+    display: inline-block;
+  }
+}
 @keyframes marquee {
   0% {
     left: 100%;
@@ -95,4 +210,78 @@ article#main {
     left: 0;
     transform: translateX(-100%);
   }
+}
+
+body #main-window > main {
+  #main-content {
+    background: linear-gradient(
+      135deg, var(--main-bg-color-B) 25%, transparent 25%
+    ) -20px 0/40px 40px, 
+    linear-gradient(
+      225deg, var(--main-bg-color-C) 25%, transparent 25%
+    ) -20px 0/40px 40px, 
+    linear-gradient(
+      315deg, var(--main-bg-color-B) 25%, transparent 25%
+    ) 0px 0/40px 40px, 
+    linear-gradient(
+      45deg, var(--main-bg-color-C) 25%, transparent 25%
+    ) 0px 0/40px 40px, 
+    var(--main-bg-color-A);
+    padding: 0.25rem;
+    padding-inline: 0.5rem;
+    display: flex;
+    flex-flow: column;
+    & > :is(header,main,footer) {
+      padding: 0.25rem;
+    }
+    & > header {
+      display: flex;
+      flex-flow: column;
+      justify-content: center;
+      align-items: center;
+      .funny-logo {
+        margin: 3rem;
+        margin-inline: auto;
+        width: min(max(
+          28rem, 40%
+        ), 95%);
+        h2 {
+          font-weight: lighter;
+          font-size: 320%;
+        }
+      } 
+    }
+    & > main {
+      flex: 1;
+    }
+  }
+
+  #side-frame {
+    background-image: linear-gradient(
+      150deg,  var(--frame-bg-color-B) -5vh, var(--frame-bg-color-A) 30vh
+    );
+    padding: 0.25rem;
+    display: flex;
+    flex-flow: column;
+    & > :is(header,main,footer) {
+      padding: 0.125rem;
+    }
+    & > header {
+      .funny-logo {
+        max-width: 95%;
+        font-size: 130%;
+      }
+    }
+    & > main {
+      flex: 1;
+    }
+    & > footer {
+      & > div#admin-only {
+        & * {
+          font-size: smaller;
+        }
+      }
+    }
+  }
+
 }

@@ -2,6 +2,7 @@
 
 use std::fmt::Display;
 use std::io::{BufReader, BufWriter};
+use std::str::FromStr;
 use std::sync::{Arc, OnceLock};
 use std::{fs::File, io::ErrorKind};
 
@@ -21,15 +22,32 @@ use serde::{Deserialize, Serialize};
 
 use crate::CONFIG;
 
-pub(crate) fn mainte_serve(articles: crate::Articles) -> Router {
+#[derive(Deserialize, Serialize)]
+pub struct MaintePageConfig {
+  pub password_dir: String,
+  pub initial_username: String,
+  pub initial_pswd: String,
+  pub argon2_mem_cost: u32,
+  pub argon2_time_cost: u32,
+  pub argon2_par_cost: u32,
+}
+impl Default for MaintePageConfig {
+  fn default() -> Self {
+    Self {
+      password_dir: "mainte-pswd".into(),
+      initial_username: "Admin01".into(),
+      initial_pswd: "D3fau1tPassw0rd".into(),
+      argon2_mem_cost: 4096,
+      argon2_time_cost: 1,
+      argon2_par_cost: 2,
+    }
+  }
+}
+
+pub(crate) fn mainte_serve() -> Router {
   let p1 = PasswordCache::new();
   let p2 = p1.clone();
-  Router::new()
-    .route("/", post(move |f| mainte_page(f, p1.clone())))
-    .route(
-      "/put-diary",
-      post(move |f| put_diary(f, p2.clone(), articles.clone())),
-    )
+  Router::new().route("/", post(move |f| mainte_page(f, p1.clone())))
 }
 
 /// メンテページログイン用パスワードのserde用生データ
@@ -56,6 +74,8 @@ enum PasswordDataError {
   MsgPackEncodeError(rmp_serde::encode::Error),
   /// password_hashに関する広範なエラー
   PasswordHashError(password_hash::Error),
+  /// 不正なユーザ名
+  InvalidUserName,
 }
 impl Display for PasswordDataError {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -73,14 +93,44 @@ impl From<std::io::Error> for PasswordDataError {
 #[derive(Debug)]
 struct PasswordInvalid;
 
+#[derive(Debug, Deserialize, Serialize)]
+struct UserName(String);
+impl UserName {
+  const INVALID_USERNAME_STRING: &'static [char] = &[
+    '\\', '/', ':', ';', '%', '*', '"', '\'', '?', '!', '|', '&', '<', '>',
+  ];
+  pub fn as_str(&self) -> &str {
+    &self.0
+  }
+}
+impl ToString for UserName {
+  fn to_string(&self) -> String {
+    self.0.clone()
+  }
+}
+impl FromStr for UserName {
+  type Err = &'static str;
+
+  fn from_str(s: &str) -> Result<Self, Self::Err> {
+    if s.contains(Self::INVALID_USERNAME_STRING) {
+      return Err("Invalid charactor with in name");
+    }
+    Ok(Self(s.split(['/', '\\']).last().unwrap().to_string()))
+  }
+}
+
 /// メンテページログイン用パスワード
 struct PasswordData {
   hash: PasswordHashString,
   is_initial: bool,
 }
 impl PasswordData {
-  pub fn get() -> Result<Self, PasswordDataError> {
-    let fp = match File::open(&CONFIG.maintenance_page.password_file) {
+  pub fn get(user_name: &UserName) -> Result<Self, PasswordDataError> {
+    let fp = match File::open(format!(
+      "{dir}/{user_name}.bin",
+      dir = CONFIG.maintenance_page.password_dir,
+      user_name = user_name.as_str()
+    )) {
       Ok(fp) => fp,
       Err(e) => match e.kind() {
         ErrorKind::NotFound => {
@@ -311,35 +361,4 @@ struct PutDiaryObject {
   diary_title: String,
   #[serde(alias = "diary-text")]
   diary_text: String,
-}
-async fn put_diary(
-  Form(form): Form<PutDiaryObject>,
-  password: PasswordCache,
-  articles: crate::Articles,
-) -> Result<impl IntoResponse, impl IntoResponse> {
-  if !password.verify(form.password.trim().as_bytes()).unwrap() {
-    Err(StatusCode::FORBIDDEN)
-  } else {
-    articles.0.write().push(crate::Article {
-      title: form.diary_title,
-      body: form.diary_text,
-      update: chrono::Utc::now(),
-    });
-    Ok(Html(format!(
-      "<!doctype html>\
-      <html>\
-        <head>\
-          <title>記事は正常に投稿されました</title>\
-        </head>\
-        <body>\
-          <p>記事は正常に投稿されました。</p>\
-          <form method=\"POST\" action=\"/mainte\">\
-            <input type=\"hidden\" name=\"password\" value=\"{password}\">\
-            <label><input type=\"submit\" value=\"戻る\"></label>\
-          </form>\
-        </body>\
-      </html>",
-      password = form.password.trim(),
-    )))
-  }
 }

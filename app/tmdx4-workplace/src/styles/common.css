@@ -1,311 +1,317 @@
+/* 共用ライブラリの実装 */
 :root {
-  --page-padding-top: 5vh;
-  --page-padding-bottom: 5vh;
-  --page-padding-left: 5vw;
-  --page-padding-right: 5vw;
-  --page-background-color: #009999;
-  --content-area-background-color: #CCCCCC;
-  --content-area-border-color: #FFFFFF;
-  --default-font-color: #000000;
-  --header-bar-color: #000099;
-  --header-text-color: #FFFFFF;
-  --button-background-color: #CCCCCC;
-  --button-active-background-color: #999999;
-  --button-border-color: #FFFFFF;
-  --button-active-border-color: #CCCCCC;
-  --side-background-color-A: #FFFFFF;
-  --side-background-color-B: #00CCFF;
-  --center-background-color-A: #FFFFCC;
-  --center-background-color-B: #FFEEBB;
-  --center-background-color-C: #FFDDBB;
-  --maincontent-title-background-color: #00FFFF;
-  --maincontent-title-text-color-A: #FFEECC;
-  --maincontent-title-text-color-B: #FFFFFF;
-  --maincontent-title-shadow-color: #AA9966;
-  --maincontent-mainarea-background-color: #FFEEDD;
-}
-:root:has(#content-area > header input#nightmode:checked) {
-  --page-background-color: #003333;
-  --content-area-background-color: #333333;
-  --content-area-border-color: #666666;
-  --default-font-color: #CCCC99;
-  --header-bar-color: #000066;
-  --header-text-color: #CCCCCC;
-  --button-background-color: #333333;
-  --button-active-background-color: #000000;
-  --button-border-color: #666666;
-  --button-active-border-color: #333333;
-  --side-background-color-A: #000000;
-  --side-background-color-B: #003366;
-  --center-background-color-A: #111133;
-  --center-background-color-B: #001133;
-  --center-background-color-C: #000022;
-  --maincontent-title-background-color: #000000;
-  --maincontent-title-text-color-A: #CC9966;
-  --maincontent-title-text-color-B: #CCCCCC;
-  --maincontent-title-shadow-color: #333333;
-  --maincontent-mainarea-background-color: #222233;
+  --window-bg-color: #CCCCCC;
+  --window-border-color: #FFFFFF;
+  --window-header-color: #000099;
+  --window-header-font-color: #FFFFFF;
+  --button-bg-color: var(--window-bg-color);
+  --button-border-color: var(--window-border-color);
+  --button-bg-color-hov: lch(from var(--button-bg-color) calc(l + 10) c h);
+  --button-border-color-hov: lch(from var(--button-border-color) calc(l + 10) c h);
+  --button-bg-color-act: lch(from var(--button-bg-color) calc(l - 10) c h);
+  --button-border-color-act: lch(from var(--button-border-color) calc(l - 10) c h);
+  --input-text-bg-color: #FFFFFF;
+  --font-color: #000000;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  border: none;
-  box-sizing: border-box;
-  /*font-family: 'IPAEXG';*/
-  color: var(--default-font-color);
-  white-space: wrap collapse;
-}
-@font-face {
-  font-family: 'IPAEXG';
-  src: url("assets/font/IPAexfont00401/ipaexg.ttf");
-}
-
-/* コンテンツ全体についての設定 */
-html {
-  width: 100%;
-  height: 100%;
-}
-@media screen and (min-width: 720px) {
-  /* PCならモバイル用コンテンツは表示しない */
-  .view-mob-only {
-    display: none;
-  }
-}
-@media screen and (max-width: 719px) {
-  /* モバイルならPC用コンテンツは表示しない */
-  .view-pc-only {
-    display: none;
-  }
-}
-
-body {
-  width: 100%;
-  height: 100%;
-  padding-top: var(--page-padding-top);
-  padding-bottom: var(--page-padding-bottom);
-  padding-left: var(--page-padding-left);
-  padding-right: var(--page-padding-right);
-  background-color: var(--page-background-color);
-}
-@media screen and (min-width: 720px) {
-  /* ユーザが最大化ボタンを押してる場合 */
-  body:has(#content-area > header :is(input#maximize:checked)) {
-    padding: 0;
-  }
-}
-@media screen and (max-width: 719px) {
-  /*幅719px未満のディスプレイの場合は上下左右の余白を表示しない*/
-  body {
-    padding: 0;
-  }
-}
-
-#content-area {
-  width: 100%;
-  height: 100%;
-  border: outset 2px var(--content-area-border-color);
-  background-color: var(--content-area-background-color);
-  display: flex;
-  flex-flow: column;
-}
-
-/* ヘッダについての設定 */
-#content-area > header {
-  flex: 0;
-  padding: 2px;
-  padding-bottom: 0.25em;
-  border-bottom: groove 2px var(--content-area-border-color);
-}
-#head-bar {
-  background-color: var(--header-bar-color);
-  color: var(--header-text-color);
+/* Win98風列方向UI汎用ライブラリ */
+.row-ui {
   display: flex;
   flex-flow: row;
-  justify-content: center;
-  align-content: center;
   align-items: center;
-}
-#head-bar > *:nth-child(2) {
-  margin-right: auto;
-}
-#head-bar-title > h1 {
-  font-size: large;
-  font-weight: bold;
-  color: var(--header-text-color);
-}
-@media screen and (min-width: 720px) {
-  #head-bar-button .view-pc-only {
-    display: flex;
-    flex-flow: row;
+
+  & hr {
+    height: 100%;
+  }
+
+  & hr.sep-thick {
+    border: outset 2px var(--window-border-color);
+    margin-inline: 2px;
+  }
+
+  & hr.sep-thin {
+    border-left: groove 2px var(--window-border-color);
+    margin-inline: 1px; 
   }
 }
-@media screen and (max-width: 719px) {
-  #head-bar-button .view-mob-only {
-    display: flex;
-    flex-flow: row;
-  }
-}
-#head-bar-button {
+
+/* Win98風のバースタイルのUI */
+.ui-bar {
+  position: sticky;
+  padding: 1px;
+  z-index: 1000;
   display: flex;
   flex-flow: row;
-}
+  background-color: var(--window-bg-color);
+  border: 1px outset var(--window-border-color);
+  border-top: 2px outset var(--window-border-color);
 
-input {
-  appearance: none;
-  display: none;
-}
-label:has(input) {
-  cursor: pointer;
-}
-#content-area > header #head-bar-button {
-  label:has(input[type="checkbox"]) {
-    user-select: none;
-    margin: 1px;
-    padding-inline: 2px;
-    display: block;
-    background-color: var(--button-background-color);
-    border: outset 2px var(--button-border-color);
-    font-size: small;
-    font-weight: 900;
-    color: var(--default-font-color);
+  & > :first-child {
+    flex: 0 0 auto;
   }
-  label:has(input[type="checkbox"]:checked) {
-    background-color: var(--button-active-background-color);
-    border: inset 2px var(--button-active-border-color);
+  & > :nth-child(2) {
+    flex: 1;
   }
-}
-#content-area > #noframe-scroll > main > article#side footer > div#login-admin {
-  input {
-    appearance: initial;
-    display: block;
+  & > :last-child {
+    flex: 0 0 auto;
   }
-  :is(input[type="textarea"],input[type="password"]) {
-    background-color: white;
-    border: inset 1px var(--content-area-border-color);
-  }
-  input[type="submit"] {
-    background-color: var(--button-background-color);
-    border: outset 2px var(--button-border-color);
-  }
-  input[type="submit"]:active {
-    background-color: var(--button-active-background-color);
-    border: inset 2px var(--button-active-border-color);
+  & > * {
+    display: flex;
+    flex-flow: row;
   }
 }
 
-/* メインコンテンツ部分の枠についての設定 */
-#noframe-scroll {
-  flex: 1 1 0;
+/* Win98風ウィンドウ */
+.ui-window {
+  position: absolute;
+  padding: 1px;
+  z-index: 1000;
   display: flex;
   flex-flow: column;
-}
+  background-color: var(--window-bg-color);
+  border: 2px outset var(--window-border-color);
 
-#noframe-scroll > main {
-  flex: 1 1 0;
-  display: flex;
-  flex-flow: row-reverse;
-}
-#noframe-scroll > main > article {
-  padding: 0.25em;
-  padding-inline: 0.25em;
-  border: inset 2px var(--content-area-border-color);
-}
-#noframe-scroll > main > article#side {
-  flex: 0 1 auto;
-  > div.sys-style-marker {
-    max-width: max(8em, 15vw);
+  & > * {
+    width: 100%;
   }
-}
-#noframe-scroll > main > article#main {
-  flex: 1 1 0;
-}
-@media screen and (max-width: 719px) {
-  #content-area {
-    > header:not(:has(#showside:checked)) + #noframe-scroll {
+  & > main {
+    flex: 1 1 0;
+    overflow: hidden;
+    display: flex;
+    flex-flow: row;
+    & .window-graphic-obj {
+      width: 100%;
+      height: 100%;
       overflow: auto;
-      > main {
-        /*> article#main { 
-        }*/
-        > article#side {
-          display: none;
-        }
-      }
+      border: 1px inset var(--window-border-color);
     }
-    > header:has(#showside:checked) + #noframe-scroll {
-      overflow: auto;
-      > main {
-        > article#main {
-          display: none;
+    & hr {
+      border-bottom: 2px groove var(--window-border-color);
+    }
+  }
+  & > header {
+    flex: 0;
+    padding-bottom: 2px;
+    & > .window-header-line {
+      background-color: var(--window-header-color);
+      padding: 1px;
+      margin-bottom: 1px;
+      display: flex;
+      flex-flow: row;
+      align-items: center;
+      align-content: center;
+      & hr {
+        margin-inline: 2px;
+      }
+      & > * {
+        height: 100%;
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        align-content: center;
+      }
+      & > .window-hl-left {
+        margin-right: auto;
+      }
+      & > .window-hl-right {
+        margin-left: auto;
+      }
+      & > * > * {
+        padding-inline: 1px;
+      }
+      & .ctx-button {
+        display: flex;
+        flex-flow: row;
+        & .button-array {
+          display: flex;
+          flex-flow: row;
         }
-        > article#side {
-          flex: 1 1 0;
-          > div.sys-style-marker {
-            max-width: 100%;
-            height: 100%;
+        & .common-button {
+          margin-inline: 1px;
+          width: 1.25rem;
+          height: 1rem;
+          :is(&, & > *) {
+            font-size: small;
+            font-weight: bolder;
+          }
+        }
+        & fieldset {
+          display: flex;
+          flex-flow: row;
+          margin-inline: 1px;
+          & > .common-button {
+            margin: 0;
           }
         }
       }
-    }
-  }
-}
-@media screen and (min-width: 720px) {
-  #content-area {
-    > header:has(:not(#noframe:checked)) + #noframe-scroll > main {
-      overflow-y: hidden;
-      > article { overflow-y: auto; }
-    }
-    > header:has(#noframe:checked) + #noframe-scroll {
-      overflow: auto;
-      > main > article#side {
-        display: none;
+      .window-title {
+        font-size: 1rem;
+        color: var(--window-header-font-color);
+      }
+      .window-title-icon {
+        height: 1rem;
       }
     }
-    > header:has(#sideinverse:checked) + #noframe-scroll > main {
+    & > .window-header-menu {
+      display: flex;
       flex-flow: row;
+      border: inset 1px var(--window-border-color);
+      font-size: small;
+      & > * {
+        border: outset 1px var(--window-border-color);
+        display: flex;
+        flex-flow: row;
+        > .common-button {
+          padding-inline: 1rem;
+          height: 100%;
+          vertical-align:middle;
+        }
+      }
+      & > :first-child {
+        flex: 1;
+      }
+      & > .window-header-right-logo {
+        height: 1.5rem;
+        width: 2.5rem;
+        background-color: black;
+        display: flex;
+        flex-flow: row;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+        & > .window-header-right-logo-icon {
+          height: 1rem;
+        }
+      }
     }
+  }
+  & > footer {
+    flex: 0;
+    display: flex;
+    flex-flow: row;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
   }
 }
 
-/* フッタについての設定 */
-#noframe-scroll > footer {
-  flex: 0;
-  padding: 1px;
-  padding-top: 0.25em;
-  border-top: groove 2px var(--content-area-border-color);
+/* ボタンクロージャ */
+.cb-closure {
+  z-index: 100;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  background-color: transparent;
+  display: none;
+}
+
+/* 汎用テキストインプット */
+.common-text-input {
+  --border-thickness: 2px;
+  padding-inline: 2px;
+  background-color: var(--input-text-bg-color);
+  border: inset var(--border-thickness) var(--window-border-color);
+}
+
+/* 汎用ボタン */
+.common-button {
+  z-index: 50;
   display: flex;
-  flex-flow: row;
-  align-content: center;
-  align-items: center;
   justify-content: center;
-}
-
-/* 共通デザインの設定 */
-
-/* HRタグ */
-hr {
-  border-bottom: groove 2px var(--content-area-border-color);
-  margin: 0.5em;
-  margin-inline: 0;
-}
-
-/* マジダサロゴくん */
-.page-title {
-  margin-inline: auto;
-  padding: 1em;
-  background-color: var(--maincontent-title-background-color);
-  display: table;
-  user-select: none;
-  > div {
-    display: table-cell;
-    vertical-align: middle;
-    text-align: center;
-    > div {
-      text-shadow: 0.25em 0.25em var(--maincontent-title-shadow-color);
-      transform: skew(5deg, 2deg);
+  align-items: center;
+  width: fit-content;
+  height: fit-content;
+  text-align: center;
+  background-color: var(--button-bg-color);
+  --border-thickness: 2px;
+  
+  border: var(--border-thickness) solid transparent;
+  &:not(.flat-type) {
+    border: var(--border-thickness) outset var(--button-border-color);
+  }
+  &:hover {
+    &:not(.flat-type) {
+      background-color: var(--button-bg-color-hov);
     }
-    * {
-      color: var(--maincontent-title-text-color-A);
+    border: var(--border-thickness) outset var(--button-border-color-hov);
+  }
+  &:is(
+    :not(.hidden-checked-active):has(> input:is([type="checkbox"],[type="radio"]):checked),
+    :active
+  ) {
+    background-color: var(--button-bg-color-act);
+    border: var(--border-thickness) inset var(--button-border-color-act);
+  }
+  & > input:is([type="checkbox"],[type="radio"],[type="button"],[type="submit"]) {
+    display: none;
+    appearance: none;
+  }
+
+  /* ボタンが無効のとき、有効時に表示するボタン内容の処理 */
+  &:not(:is(
+    :has(> input:is([type="checkbox"],[type="radio"]):checked),
+    :active
+  )) > .with-enable {
+    display: none;
+  }
+
+  /* ボタンが有効のとき、有効時は非表示にするボタン内容の処理 */
+  &:is(
+    :has(> input:is([type="checkbox"],[type="radio"]):checked),
+    :active
+  ) > .with-disable {
+    display: none;
+  }
+  :is(&,& > *) {
+    white-space: unset;
+    user-select: none;
+    color: var(--font-color);
+  }
+}
+
+/* 汎用プルダウン */
+.common-pulldown {
+  position: relative;
+  --list-border-thickness: 2px;
+  --shift: calc(100%/2 + 0.5rem + var(--border-thickness));
+  & > :is(ul,ol) {
+    z-index: 50;
+    position:absolute;
+    display: none;
+    min-width: 100%;
+    background-color: var(--window-bg-color);
+    border: outset var(--list-border-thickness) var(--window-border-color);
+    top: calc(var(--shift) + var(--list-border-thickness));
+    & > li {
+      display: block;
+      width: 100%;
+      white-space: nowrap;
+      & > label {
+        width: 100%;
+      }
+    }
+  }
+  & > ul > li {
+    list-style: none;
+  }
+  &:is(
+    :active,
+    :has(:is(
+      ul:hover, 
+      & > input:is([type="checkbox"],[type=radio]):checked)
+    )
+  ) {
+    & > :is(ul, ol) {
+      &:before {
+        content: "";
+        width: 100%;
+        top: -100%;
+        height: 100%;
+        position: absolute;
+        display: block;
+        background-color: transparent;
+      }
+      display: block;
     }
   }
 }

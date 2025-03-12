@@ -30,8 +30,11 @@ features = ["serde"]
 [dependencies]
 rand = "0.8"
 rand_chacha = "0.3"
-ouroboros = "0.18"
+hex = "0.4"
 argon2 = "0.5"
+digest = "0.10"
+sha3 = "0.10"
+ouroboros = "0.18"
 parking_lot = "0.12"
 log = "0.4"
 env_logger = "0.11"
