@@ -1,26 +1,7 @@
 //! メンテナンスページの実装
 
-use std::fmt::Display;
-use std::io::{BufReader, BufWriter};
-use std::str::FromStr;
-use std::sync::{Arc, OnceLock};
-use std::{fs::File, io::ErrorKind};
-
-use argon2::PasswordVerifier;
-use argon2::password_hash::{self, PasswordHasher};
-use argon2::{
-  Argon2, Params,
-  password_hash::{PasswordHashString, SaltString},
-};
-use axum::http::StatusCode;
-use axum::response::{Html, IntoResponse};
-use axum::routing::post;
-use axum::{Form, Router};
-use parking_lot::{RwLock, RwLockReadGuard, RwLockWriteGuard};
-use rand::rngs::OsRng;
+use axum::{Router, response::Html, routing::post};
 use serde::{Deserialize, Serialize};
-
-use crate::CONFIG;
 
 #[derive(Deserialize, Serialize)]
 pub struct MaintePageConfig {
