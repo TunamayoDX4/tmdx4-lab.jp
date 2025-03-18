@@ -9,6 +9,7 @@ use crate::{
   COMMON_CSS, 
   MAIN_CSS, 
 };
+pub mod frame;
 
 #[derive(Default, Debug, Clone, Copy, Serialize, Deserialize)]
 pub enum ViewMode {
@@ -70,7 +71,7 @@ impl std::fmt::Display for IsSelected {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct MainQuery {
+pub struct MainArgs {
   #[serde(alias = "view-mode", default)]
   pub view_mode: ViewMode,
   #[serde(default)]
@@ -85,7 +86,7 @@ pub struct MainQuery {
   pub noframe: IsSelected,
 }
 
-pub async fn main_page(Query(mq): Query<MainQuery>) -> impl IntoResponse {
+pub async fn main_page(Query(mq): Query<MainArgs>) -> impl IntoResponse {
   let buffer = format!(
     "\
       <!doctype html>\
@@ -272,7 +273,7 @@ pub async fn main_page(Query(mq): Query<MainQuery>) -> impl IntoResponse {
                 </div>
                 <div style='width: 100%; display: flex; flex-flow: row; align-items: center; align-content: center; justify-content: space-between; padding-inline: 1rem; margin: 0.25rem;'>
                   <label for='enter-admin' class='common-button' style='padding-inline: 0.5rem;'>
-                    <input type='submit' id='enter-admin' form='trans-ownpage' formaction='admin-enter' formmethod='post'>ﾛｸﾞｲﾝ
+                    <input type='submit' id='enter-admin' form='trans-ownpage' formaction='mainte' formmethod='post'>ﾛｸﾞｲﾝ
                   </label>
                   <label for='enter-adm-window-open' class='common-button hidden-checked-active' style='padding-inline: 0.5rem;'>ｷｬﾝｾﾙ</label>
                 </div>

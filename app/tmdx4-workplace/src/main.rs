@@ -2,12 +2,13 @@ use std::{
   fs::File, io::BufWriter, net::Ipv4Addr, sync::LazyLock,
 };
 
+pub mod bsod;
 pub mod main_page;
 pub mod mainte;
 pub mod service;
 pub mod usersys;
 
-use axum::{Router, routing::get};
+use axum::{Router, http::StatusCode, routing::get};
 use chrono::{DateTime, Utc};
 use env_logger::Target;
 use serde::{Deserialize, Serialize};
@@ -86,7 +87,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     .build();
   let app = Router::new()
     .route("/", get(move |q| main_page::main_page(q)))
-    .nest("/mainte", mainte::mainte_serve());
+    .nest("/mainte", mainte::mainte_serve())
+    .fallback(async || {
+      bsod::bsod(StatusCode::NOT_FOUND, None, None)
+    });
   let listener = TcpListener::bind((
     Ipv4Addr::from([0, 0, 0, 0]),
     CONFIG.listen_port,
