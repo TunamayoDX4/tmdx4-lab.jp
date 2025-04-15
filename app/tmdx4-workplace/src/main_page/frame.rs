@@ -22,7 +22,10 @@ pub fn gen_frame(
           <meta name='format-detection' content='telephone=no,email=no,address=no'>
           <title>ツナマヨの屋根裏部屋</title>
           <link rel='icon' href='assets/img/com/favicon.webp'>
-          <meta name='description' content='しがない創作者ツナ・マヨネーズの作業部屋。趣味で作ったイラストやプログラム、漫画などを公開していきます。'>
+          <meta name='description' \
+            content='しがない創作者ツナ・マヨネーズの作業部屋。趣味で作ったイラストやプログラム、\
+            漫画などを公開していきます。\
+            '>
           <link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Mochiy+Pop+One'>
           <style>{COMMON_CSS}</style>
           <style>{MAIN_CSS}</style>
@@ -41,19 +44,23 @@ pub fn gen_frame(
                     <div class='ctx-button'>
                       <fieldset>
                         <label for='daytime' class='common-button'>
-                          <input form='trans-ownpage' type='radio' name='view-mode' id='daytime' value='daytime' {mode_daytime}>☀
+                          <input form='trans-ownpage' type='radio' \
+                            name='view-mode' id='daytime' value='daytime' {mode_daytime}>☀
                         </label>
                         <label for='night' class='common-button'>
-                          <input form='trans-ownpage' type='radio' name='view-mode' id='night' value='night' {mode_night}>☾
+                          <input form='trans-ownpage' type='radio' \
+                            name='view-mode' id='night' value='night' {mode_night}>☾
                         </label>
                       </fieldset>
                       <hr>
                       <div class='button-array'>
                         <label for='minimize' class='common-button hidden-checked-active pc-only'>
-                          <input form='trans-ownpage' type='checkbox' name='minimize' id='minimize'>－
+                          <input form='trans-ownpage' type='checkbox' \
+                            name='minimize' id='minimize'>－
                         </label>
                         <label for='maximize' class='common-button hidden-checked-active pc-only'>
-                          <input form='trans-ownpage' type='checkbox' name='maximize' id='maximize' {maximize}>
+                          <input form='trans-ownpage' type='checkbox' \
+                            name='maximize' id='maximize' {maximize}>
                           <span class='with-disable'>□</span>
                           <span class='with-enable'>
                             <span style='font-size: 0.7em'>□</span>
@@ -63,7 +70,8 @@ pub fn gen_frame(
                       </div>
                       <div class='button-array'>
                         <label for='toggleframe' class='common-button hidden-checked-active mob-only'>
-                          <input form='trans-ownpage' type='checkbox' name='toggleframe' id='toggleframe'>
+                          <input form='trans-ownpage' type='checkbox' \
+                            name='toggleframe' id='toggleframe'>
                           <span class='with-disable'>＜</span>
                           <span class='with-enable'>＞</span>
                         </label>
@@ -74,14 +82,16 @@ pub fn gen_frame(
                 <section class='window-header-menu'>
                   <section class='window-header-pulldown-list row-ui' style='z-index: 1000;'>
                     <hr class='sep-thick'>
-                    <nav class='common-button common-pulldown flat-type' id='menu-navi' style='--border-thickness: 1px'>
+                    <nav class='common-button common-pulldown flat-type' \
+                      id='menu-navi' style='--border-thickness: 1px'>
                       ﾅﾋﾞｹﾞｰｼｮﾝ(N)
                       <ul>
                         <li class='common-button flat-type' style='--border-thickness: 1px'>あああ</li>
                         <li class='common-button flat-type' style='--border-thickness: 1px'>いいい</li>
                       </ul>
                     </nav>
-                    <div class='common-button common-pulldown flat-type' id='menu-favorite' style='--border-thickness: 1px'>
+                    <div class='common-button common-pulldown flat-type' \
+                      id='menu-favorite' style='--border-thickness: 1px'>
                       お気に入り(F)
                       <ul>
                         <li class='common-button flat-type' style='--border-thickness: 1px'>管理人のMissKey Design</li>

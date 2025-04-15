@@ -34,6 +34,9 @@ pub enum UserDataError {
     user_data: Option<std::io::Error>,
   },
 
+  /// ユーザデータの初期化が出来なかったよ
+  UserDataInitializeError(Box<dyn std::error::Error>),
+
   /// ユーザデータの読み込み時のエラー
   UserDataLoadError(std::io::Error),
 
@@ -87,6 +90,9 @@ impl std::fmt::Display for UserDataError {
           &Self::NOT_ERR_STR
         }
       )),
+      Self::UserDataInitializeError(e) => f.write_fmt(
+        format_args!("User data initialize error: {e}"),
+      ),
       Self::UserDataLoadError(e) => {
         f.write_fmt(format_args!("User data loading error: {e}"))
       }
@@ -119,6 +125,22 @@ impl std::error::Error for UserDataError {}
   Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize,
 )]
 pub struct UserIdent(#[serde(with = "serde_bytes")] [u8; 32]);
+impl std::fmt::Display for UserIdent {
+  fn fmt(
+    &self,
+    f: &mut std::fmt::Formatter<'_>,
+  ) -> std::fmt::Result {
+    self
+      .0
+      .iter()
+      .flat_map(|c| [c & 0xF0, c & 0x0F].into_iter())
+      .filter_map(|c| char::from_digit(c as u32, 16))
+      .fold(std::fmt::Result::Ok(()), |i, v| match i {
+        Ok(_) => f.write_char(v),
+        Err(e) => Err(e),
+      })
+  }
+}
 impl UserIdent {
   /// ユーザ名にこの文字入れたらNG(ファイル名に使うので…)
   pub const INVALID_CHARS: &'static [char] = &[
@@ -198,14 +220,44 @@ where
 {
   ident: UserIdent,
   pswd_hash: PasswordHashString,
-  user_data: Option<D>,
+  user_data: D,
 }
 impl<D> UserData<D>
 where
   D: Serialize + for<'de> Deserialize<'de> + Send + Sync + Sized,
 {
-  pub fn user_data(&mut self) -> &mut Option<D> {
+  pub fn ident(&self) -> &UserIdent {
+    &self.ident
+  }
+
+  pub fn user_data(&self) -> &D {
+    &self.user_data
+  }
+
+  pub fn user_data_mut(&mut self) -> &mut D {
     &mut self.user_data
+  }
+
+  pub fn check_users_exist(
+    configure: &UserDataConfig,
+  ) -> Result<bool, Box<dyn std::error::Error>> {
+    match (
+      std::fs::read_dir(&configure.sec_data_path),
+      std::fs::read_dir(&configure.user_data_path),
+    ) {
+      (Ok(s), Ok(u)) => Ok(s.count() != 0 && u.count() != 0),
+      (Err(se), Err(ue)) => {
+        let (sek, uek) = (se.kind(), ue.kind());
+        match (sek, uek) {
+          (
+            std::io::ErrorKind::NotFound,
+            std::io::ErrorKind::NotFound,
+          ) => return Ok(false),
+          _ => return Err(Box::from(se)),
+        }
+      }
+      (Err(e), _) | (_, Err(e)) => return Err(Box::from(e)),
+    }
   }
 
   pub fn check_exist(
@@ -238,7 +290,12 @@ where
   pub fn load(
     id: &str,
     pswd: &str,
+    new_pswd: Option<&str>,
     configure: &UserDataConfig,
+    user_data_init_func: impl FnOnce() -> Result<
+      D,
+      Box<dyn std::error::Error>,
+    >,
   ) -> Result<Option<Self>, UserDataError> {
     // パスを生成する
     let ident = UserIdent::generate(id)?;
@@ -355,7 +412,7 @@ where
     let pswd_hash =
       argon2::password_hash::PasswordHash::generate(
         argon2,
-        pswd.trim(),
+        new_pswd.unwrap_or(pswd).trim(),
         salt.as_salt(),
       )
       .unwrap()
@@ -369,12 +426,14 @@ where
     .map_err(|e| UserDataError::UserDataSaveError(e))?;
 
     // ユーザデータの読み込み
-    let user_data =
-      match user_data.map(|rdr| rmp_serde::from_read(rdr)) {
-        Some(Err(e)) => Err(UserDataError::MPackDecodeError(e)),
-        Some(Ok(v)) => Ok(Some(v)),
-        None => Ok(None),
-      }?;
+    let user_data = match user_data
+      .map(|rdr| rmp_serde::from_read(rdr))
+    {
+      Some(Err(e)) => Err(UserDataError::MPackDecodeError(e)),
+      Some(Ok(v)) => Ok(v),
+      None => user_data_init_func()
+        .map_err(|e| UserDataError::UserDataInitializeError(e)),
+    }?;
 
     Ok(Some(Self {
       ident,
@@ -385,7 +444,7 @@ where
   pub fn new(
     name: &str,
     pswd: &str,
-    user_data: Option<D>,
+    user_data: D,
     configure: &UserDataConfig,
   ) -> Result<Self, UserDataError> {
     let ident = UserIdent::generate(name)?;
@@ -456,14 +515,12 @@ where
     wrt
       .write(self.pswd_hash.as_str().as_bytes())
       .map_err(|e| UserDataError::UserDataSaveError(e))?;
-    if let Some(user_data) = self.user_data.as_ref() {
-      let mut wrt = std::io::BufWriter::new(
-        std::fs::File::create(buffer2)
-          .map_err(|e| UserDataError::UserDataSaveError(e))?,
-      );
-      rmp_serde::encode::write(&mut wrt, user_data)
-        .map_err(|e| UserDataError::MPackEncodeError(e))?;
-    }
+    let mut wrt = std::io::BufWriter::new(
+      std::fs::File::create(buffer2)
+        .map_err(|e| UserDataError::UserDataSaveError(e))?,
+    );
+    rmp_serde::encode::write(&mut wrt, &self.user_data)
+      .map_err(|e| UserDataError::MPackEncodeError(e))?;
     Ok(())
   }
 }
