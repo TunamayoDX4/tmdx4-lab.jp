@@ -12,6 +12,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::usersys;
 pub mod page_gen;
+pub const MAINTE_CSS: &'static str =
+  include_str!("../styles/mainte.css");
 
 #[derive(Deserialize, Serialize)]
 pub struct MaintePageConfig {

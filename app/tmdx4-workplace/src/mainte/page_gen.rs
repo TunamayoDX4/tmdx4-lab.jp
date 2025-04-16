@@ -1,4 +1,5 @@
 use std::borrow::Cow;
+use super::MAINTE_CSS;
 
 use crate::usersys::{self, UserData};
 
@@ -14,29 +15,56 @@ pub(super) fn page_gen(
         <head>
           <meta charset='utf-8'>
           <title>メンテナンスページ</title>
+          <style>{MAINTE_CSS}</style>
         </head>
         <body>
-          <form action='' method='POST' id='trans-ownpage'></form>
-          <h1>メンテナンスページ</h1>
-          {change_pswd_msg}
-          <hr>
-          <h2>管理ユーザの設定</h2>
-          ユーザ識別子: {ident}
-          <input type='hidden' name='admin-name' value='{username}'>
-          <input type='hidden' name='admin-password' value='{password}'>
-          <input type='text' name='new-username' form='trans-ownpage'>
-          <input type='password' name='new-password' form='trans-ownpage'>
-          <input type='password' name='new-password-verify' form='trans-ownpage'>
-          <input type='submit' name='submit' value='送信' form='trans-ownpage'>
-          <hr>
-          <form action='upload_article' method='POST' id='upload_article'>
-            <input type='text' name='title'>
-            <input type='textarea' name='text'>
-            <input type='submit' name='submit' value='送信'>
+          <form action='' method='POST' id='trans-ownpage'>
+            <input type='hidden' name='admin-name' value='{username}'>
+            <input type='hidden' name='admin-password' value='{password}'>
           </form>
+          <header>
+            <div class='title'><h1>メンテナンスページ</h1></div>
+            <div class='tail'></div>
+          </header>
+          <main>
+            <table>
+              <tr>
+                <th>ユーザ設定</th>
+                <th></th>
+              </tr>
+              <tr>
+                <td>ユーザ識別子</td>
+                <td>{ident}</td>
+              </tr>
+              <tr>
+                <td><label for='new-username'>新しいユーザの名前</label></td>
+                <td><input type='text' name='new-username' form='trans-ownpage'></td>
+              </tr>
+              <tr>
+                <td><label for='new-password'>新しいパスワード</label></td>
+                <td><input type='password' name='new-password' form='trans-ownpage'></td>
+              </tr>
+              <tr>
+                <td><label for='new-password-verify'>新しいパスワード(確認)</label></td>
+                <td><input type='password' name='new-password-verify' form='trans-ownpage'></td>
+              </tr>
+              <tr>
+                <td colspan='2'><input type='submit' name='submit' value='送信' form='trans-ownpage'></td>
+              </tr>
+              {change_pswd_msg_head}{change_pswd_msg}{change_pswd_msg_tail}
+            </table>
+          </main>
         </body>
       </html>
     ",
+    change_pswd_msg_head = match ch_ud_mode {
+      super::ChangeUserDataMode::Nop => "", 
+      _ => "<tr><td colspan='2'>"
+    },
+    change_pswd_msg_tail = match ch_ud_mode {
+      super::ChangeUserDataMode::Nop => "", 
+      _ => "</td></tr>"
+    },
     change_pswd_msg = match ch_ud_mode{
       super::ChangeUserDataMode::NewUser { new_username, new_password } => {
         UserData::new(new_username, new_password, (), &crate::CONFIG.maintenance_page.usersys_config).unwrap().save(&crate::CONFIG.maintenance_page.usersys_config).unwrap();
